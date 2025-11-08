@@ -4,33 +4,54 @@ import DarkModeToggle from './components/DarkModeToggle'
 import Cart from './components/Cart'
 
 const App = () => {
-  // TODO: Implement state for dark mode toggle
+  // State for dark mode toggle
+  const [isDarkMode, setIsDarkMode] = useState(false)
 
-  // TODO: Implement state for cart management
+  // State for cart management
+  const [cartItems, setCartItems] = useState([])
 
-  // TODO: Implement state for category filtering
+  // State for category filtering
+  const [categoryFilter, setCategoryFilter] = useState('all')
+
+  const handleToggleDarkMode = () => {
+    setIsDarkMode(prevMode => !prevMode)
+  }
+
+  const handleAddToCart = (product) => {
+    setCartItems(prevItems => {
+      // Check if product is already in cart
+      const existingItem = prevItems.find(item => item.id === product.id)
+      if (existingItem) {
+        return prevItems // Don't add duplicates
+      }
+      return [...prevItems, product]
+    })
+  }
+
+  const handleCategoryChange = (event) => {
+    setCategoryFilter(event.target.value)
+  }
 
   return (
-    <div>
+    <div className={isDarkMode ? 'dark-mode' : ''}>
       <h1>🛒 Shopping App</h1>
       <p>
         Welcome! Your task is to implement filtering, cart management, and dark
         mode.
       </p>
 
-      {/* TODO: Render DarkModeToggle and implement dark mode functionality */}
+      <DarkModeToggle isDarkMode={isDarkMode} onToggle={handleToggleDarkMode} />
 
-      {/* TODO: Implement category filter dropdown */}
       <label>Filter by Category: </label>
-      <select>
+      <select value={categoryFilter} onChange={handleCategoryChange}>
         <option value="all">All</option>
         <option value="Fruits">Fruits</option>
         <option value="Dairy">Dairy</option>
       </select>
 
-      <ProductList />
+      <ProductList categoryFilter={categoryFilter} onAddToCart={handleAddToCart} />
 
-      {/* TODO: Implement and render Cart component */}
+      {cartItems.length > 0 && <Cart items={cartItems} />}
     </div>
   )
 }
